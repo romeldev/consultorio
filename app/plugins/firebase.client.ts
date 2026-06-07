@@ -20,7 +20,11 @@ export default defineNuxtPlugin(() => {
   const googleProvider = new GoogleAuthProvider()
 
   const user = useState('auth-user', () => null)
-  onAuthStateChanged(auth, (u) => { user.value = u as any })
+  const authReady = useState('auth-ready', () => false)
+  onAuthStateChanged(auth, (u) => {
+    user.value = u as any
+    authReady.value = true
+  })
 
   return {
     provide: { firestore, auth, googleProvider },
