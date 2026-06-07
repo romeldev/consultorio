@@ -25,9 +25,13 @@ const { user, authReady, signIn } = useAuth()
 const loading = ref(false)
 const error = ref('')
 
-watch([user, authReady], ([u, ready]) => {
-  if (ready && u) navigateTo('/')
-}, { immediate: true })
+onMounted(() => {
+  console.log('[Login] montado — user:', user.value?.email ?? 'null', '| authReady:', authReady.value)
+  watch([user, authReady], ([u, ready]) => {
+    console.log('[Login] watch — user:', u?.email ?? 'null', '| ready:', ready)
+    if (ready && u) navigateTo('/')
+  }, { immediate: true })
+})
 
 const handleSignIn = async () => {
   loading.value = true
@@ -35,8 +39,15 @@ const handleSignIn = async () => {
   try {
     await signIn()
   } catch (e: any) {
-    console.error('[Login] signIn error:', e)
-    error.value = e?.message ?? 'Error al iniciar sesión.'
+    console.error('[Login] error:', e?.code, e?.message)
+    if (e?.code === 'auth/popup-blocked') {
+      error.value = 'El popup fue bloqueado. Permite popups para este sitio e intenta de nuevo.'
+    } else if (e?.code === 'auth/cancelled-popup-request') {
+      // usuario cerró el popup, no mostrar error
+    } else {
+      error.value = `Error: ${e?.code ?? e?.message}`
+    }
+  } finally {
     loading.value = false
   }
 }
@@ -61,22 +72,9 @@ const handleSignIn = async () => {
   box-shadow: 0 2px 12px rgba(0,0,0,0.1);
 }
 
-.login-logo {
-  font-size: 3rem;
-  margin-bottom: 1rem;
-}
-
-h1 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin-bottom: 0.25rem;
-}
-
-p {
-  color: #666;
-  font-size: 0.9rem;
-  margin-bottom: 2rem;
-}
+.login-logo { font-size: 3rem; margin-bottom: 1rem; }
+h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.25rem; }
+p { color: #666; font-size: 0.9rem; margin-bottom: 2rem; }
 
 .btn-google {
   display: flex;
@@ -99,10 +97,7 @@ p {
   box-shadow: 0 1px 4px rgba(0,0,0,0.1);
 }
 
-.btn-google:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
+.btn-google:disabled { opacity: 0.6; cursor: not-allowed; }
 
 .error {
   color: #d32f2f;
