@@ -21,24 +21,32 @@
 </template>
 
 <script setup lang="ts">
+import { getRedirectResult } from 'firebase/auth'
+
+const { $auth } = useNuxtApp()
 const { user, signIn } = useAuth()
-const loading = ref(false)
+const loading = ref(true)
 const error = ref('')
 
 watch(user, (u) => {
   if (u) navigateTo('/')
 }, { immediate: true })
 
-const handleSignIn = async () => {
-  loading.value = true
-  error.value = ''
+onMounted(async () => {
   try {
-    await signIn()
+    const result = await getRedirectResult($auth)
+    if (result?.user) navigateTo('/')
   } catch {
-    error.value = 'No se pudo iniciar sesión. Intenta nuevamente.'
+    error.value = 'Error al iniciar sesión. Verifica que el dominio esté autorizado en Firebase.'
   } finally {
     loading.value = false
   }
+})
+
+const handleSignIn = async () => {
+  loading.value = true
+  error.value = ''
+  await signIn()
 }
 </script>
 
