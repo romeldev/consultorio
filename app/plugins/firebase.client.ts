@@ -2,7 +2,7 @@ import { initializeApp, getApps } from 'firebase/app'
 import { getFirestore } from 'firebase/firestore'
 import { getAuth, GoogleAuthProvider, onAuthStateChanged, getRedirectResult } from 'firebase/auth'
 
-export default defineNuxtPlugin(async () => {
+export default defineNuxtPlugin(() => {
   const config = useRuntimeConfig()
 
   const firebaseConfig = {
@@ -22,21 +22,20 @@ export default defineNuxtPlugin(async () => {
   const user = useState('auth-user', () => null)
   const authReady = useState('auth-ready', () => false)
 
-  // Procesar resultado de redirect antes de que el router actúe
-  try {
-    const result = await getRedirectResult(auth)
-    if (result?.user) {
-      user.value = result.user as any
-      console.log('[Auth] redirect result OK:', result.user.email)
-    }
-  } catch (e) {
-    console.error('[Auth] redirect result error:', e)
-  }
+  // Procesar resultado de redirect de forma no bloqueante
+  getRedirectResult(auth)
+    .then((result) => {
+      if (result?.user) {
+        user.value = result.user as any
+        console.log('[Auth] redirect OK:', result.user.email)
+      }
+    })
+    .catch((e) => console.error('[Auth] redirect error:', e))
 
   onAuthStateChanged(auth, (u) => {
     user.value = u as any
     authReady.value = true
-    console.log('[Auth] state changed:', u?.email ?? 'null')
+    console.log('[Auth] state:', u?.email ?? 'sin sesión')
   })
 
   return {
