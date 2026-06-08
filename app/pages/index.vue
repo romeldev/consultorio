@@ -14,9 +14,24 @@
       </div>
     </header>
 
-    <main class="p-4">
+    <main class="p-4 max-w-lg mx-auto">
       <h2 class="text-xl font-semibold mb-1">Bienvenido, {{ user?.displayName?.split(' ')[0] }}</h2>
-      <p class="text-gray-500 text-sm">Panel de gestión del consultorio.</p>
+      <p class="text-gray-500 text-sm mb-6">Panel de gestión del consultorio.</p>
+
+      <button
+        class="w-full bg-blue-600 text-white rounded-2xl py-4 px-6 flex items-center gap-4 shadow-md hover:bg-blue-700 active:scale-95 transition"
+        @click="navigateTo('/consulta')"
+      >
+        <div class="bg-blue-500 rounded-xl p-2.5">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+        </div>
+        <div class="text-left">
+          <p class="font-semibold text-base">Iniciar Consulta</p>
+          <p class="text-blue-200 text-sm">Registrar nueva atención médica</p>
+        </div>
+      </button>
     </main>
   </div>
 </template>
