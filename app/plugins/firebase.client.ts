@@ -1,5 +1,5 @@
-import { initializeApp, getApps } from 'firebase/app'
-import { getFirestore } from 'firebase/firestore'
+import { initializeApp, getApps, getApp } from 'firebase/app'
+import { getFirestore, initializeFirestore, persistentLocalCache } from 'firebase/firestore'
 import { getAuth, GoogleAuthProvider, onAuthStateChanged } from 'firebase/auth'
 
 export default defineNuxtPlugin(() => {
@@ -14,8 +14,19 @@ export default defineNuxtPlugin(() => {
     appId: config.public.firebaseAppId,
   }
 
-  const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0]
-  const firestore = getFirestore(app)
+  const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp()
+
+  // Persistencia local: las escrituras se confirman en IndexedDB al instante
+  // y se sincronizan con el servidor en background (evita loops en redes móviles)
+  let firestore
+  try {
+    firestore = initializeFirestore(app, {
+      localCache: persistentLocalCache(),
+    })
+  } catch {
+    firestore = getFirestore(app)
+  }
+
   const auth = getAuth(app)
   const googleProvider = new GoogleAuthProvider()
 
