@@ -47,6 +47,9 @@
 </template>
 
 <script setup lang="ts">
+import PasoIdentificacion from '~/components/consulta/PasoIdentificacion.vue'
+import PasoMotivo from '~/components/consulta/PasoMotivo.vue'
+import HojaAtencion from '~/components/consulta/HojaAtencion.vue'
 import type { Paciente } from '~/composables/usePacientes'
 
 definePageMeta({ middleware: 'auth' })

@@ -49,6 +49,13 @@
 </template>
 
 <script setup lang="ts">
+import TabAnamnesis from '~/components/consulta/tabs/TabAnamnesis.vue'
+import TabSignosVitales from '~/components/consulta/tabs/TabSignosVitales.vue'
+import TabExamenFisico from '~/components/consulta/tabs/TabExamenFisico.vue'
+import TabDiagnosticos from '~/components/consulta/tabs/TabDiagnosticos.vue'
+import TabMedicamentos from '~/components/consulta/tabs/TabMedicamentos.vue'
+import TabOrdenesMedicas from '~/components/consulta/tabs/TabOrdenesMedicas.vue'
+import TabInterconsultas from '~/components/consulta/tabs/TabInterconsultas.vue'
 import type { Paciente } from '~/composables/usePacientes'
 
 const props = defineProps<{
