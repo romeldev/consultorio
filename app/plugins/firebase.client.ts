@@ -16,12 +16,13 @@ export default defineNuxtPlugin(() => {
 
   const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp()
 
-  // Persistencia local: las escrituras se confirman en IndexedDB al instante
-  // y se sincronizan con el servidor en background (evita loops en redes móviles)
+  // Long polling + persistencia local: evita AbortErrors en redes móviles donde
+  // el streaming HTTP (WebChannel) es abortado por la red o el navegador.
   let firestore
   try {
     firestore = initializeFirestore(app, {
       localCache: persistentLocalCache(),
+      experimentalForceLongPolling: true,
     })
   } catch {
     firestore = getFirestore(app)
